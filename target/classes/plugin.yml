@@ -1,0 +1,10 @@
+name: zIsland
+version: '1.0-SNAPSHOT'
+main: me.zeroseven.island.IslandPlugin
+api-version: '1.20'
+commands:
+  island:
+    usage: /island
+  minion:
+    usage: /minion <player> <type>
+    description: Gives the speicified player a Minion spawner.

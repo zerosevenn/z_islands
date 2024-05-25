@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="zIsland:jar">
+    <output-path>D:/Arquivos/1.20.4/plugins</output-path>
+    <root id="archive" name="zIsland.jar">
+      <element id="module-output" name="zIsland" />
+    </root>
+  </artifact>
+</component>
