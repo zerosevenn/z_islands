@@ -41,7 +41,12 @@ public class IslandDAO extends MySQLProvider {
     }
 
     public Island getIsland(Player owner){
+        String sql = "SELECT * FROM ISLAND";
+        try(Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)){
 
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package me.zeroseven.island.database;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.sk89q.worldedit.world.block.BlockType;
 import me.zeroseven.island.database.operator.MySQLProvider;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import javax.swing.*;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -72,12 +74,6 @@ public class MinionsDAO extends MySQLProvider {
         }
     }
 
-    private String serializeDrops(ItemStack[] drops) {
-        // Converta os drops para um formato serializado (por exemplo, JSON)
-        // Isso é um placeholder, a implementação real depende do seu formato de serialização
-        return Arrays.toString(drops);
-    }
-
     public List<Minion> selectMinionsByOwner(UUID ownerUuid) {
         String sql = "SELECT * FROM Minion WHERE owner_uuid = ?";
         List<Minion> minions = new ArrayList<>();
@@ -122,10 +118,15 @@ public class MinionsDAO extends MySQLProvider {
         return minions;
     }
 
+    private String serializeDrops(ItemStack[] drops) {
+        Gson gson = new Gson();
+        return gson.toJson(drops);
+    }
+
     private List<ItemStack> deserializeDrops(String drops) {
-        // Converta a string serializada de volta para ItemStack[]
-        // Isso é um placeholder, a implementação real depende do seu formato de serialização
-        return new ArrayList<>();
+        Gson gson = new Gson();
+        Type itemStackListType = new TypeToken<List<ItemStack>>() {}.getType();
+        return gson.fromJson(drops, itemStackListType);
     }
 
 }
