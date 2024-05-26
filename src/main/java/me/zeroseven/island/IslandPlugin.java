@@ -187,5 +187,7 @@ public final class IslandPlugin extends JavaPlugin{
     }
 
 
-
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
 }
