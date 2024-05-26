@@ -2,10 +2,15 @@ package me.zeroseven.island;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.commands.IslandCommand;
 import me.zeroseven.island.commands.MinionCommand;
 import me.zeroseven.island.config.FileManager;
+import me.zeroseven.island.database.IslandDAO;
+import me.zeroseven.island.database.MinionsDAO;
+import me.zeroseven.island.database.PlayersDAO;
 import me.zeroseven.island.listeners.MinionGUIListener;
+import me.zeroseven.island.listeners.MinionListeners;
 import me.zeroseven.island.listeners.MinionSpawnerListener;
 import me.zeroseven.island.listeners.UpgradeGUIListener;
 import me.zeroseven.island.minions.Minion;
@@ -33,13 +38,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.*;
 
-public final class IslandPlugin extends JavaPlugin implements @NotNull Listener {
+public final class IslandPlugin extends JavaPlugin{
 
     public static final List<Minion> MINIONS = new ArrayList<>();
     public static final List<LivingEntity> antiDrop = new ArrayList<>();
     public static final Map<LivingEntity, MobMinion> antiDropMinion = new HashMap<>();
-
-
+    private static IslandBuffer islandBuffer;
 
     private ProtocolManager protocolManager;
     public static int TOTAL;
@@ -47,7 +51,9 @@ public final class IslandPlugin extends JavaPlugin implements @NotNull Listener 
     @Override
     public void onEnable() {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
-        getServer().getPluginManager().registerEvents(this, this);
+        this.islandBuffer = new IslandBuffer(this);
+        setupDAO();
+        getServer().getPluginManager().registerEvents(new MinionListeners(), this);
         getServer().getPluginManager().registerEvents(new UpgradeGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionSpawnerListener(), this);
@@ -59,7 +65,46 @@ public final class IslandPlugin extends JavaPlugin implements @NotNull Listener 
 
         saveDefaultConfig();
         TOTAL = getConfig().getInt("total");
+        setupMinions();
 
+    }
+
+    @Override
+    public void onDisable() {
+        saveMinions();
+        saveConfig();
+    }
+
+    public void setupDAO(){
+        new IslandDAO(this).createTable();
+        new MinionsDAO(this).createTable();
+        new PlayersDAO(this).createTable();
+    }
+
+    public void saveMinions(){
+
+        getConfig().set("total", TOTAL);
+
+        for (Minion m : MINIONS) {
+            FileConfiguration fc = FileManager.getInstance().getMinionsConfig(m.getType());
+            if (m.getType() == MinionType.BLOCKS) {
+                fc.set(m.getID() + "", ((BlockMinion) m));
+            } else if (m.getType() == MinionType.CROPS) {
+                fc.set(m.getID() + "", ((CropMinion) m));
+            } else {
+                fc.set(m.getID() + "", ((MobMinion) m));
+            }
+
+            try {
+                fc.save(FileManager.getInstance().getMinionsFile(m.getType()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public void setupMinions(){
         for (MinionType type : MinionType.values()) {
             FileConfiguration fc = FileManager.getInstance().getMinionsConfig(type);
             for (String str : fc.getKeys(false)) {
@@ -137,107 +182,10 @@ public final class IslandPlugin extends JavaPlugin implements @NotNull Listener 
         }.runTaskTimer(this, 40, 20);
     }
 
-    @Override
-    public void onDisable() {
-
-        getConfig().set("total", TOTAL);
-
-        for (Minion m : MINIONS) {
-            FileConfiguration fc = FileManager.getInstance().getMinionsConfig(m.getType());
-            if (m.getType() == MinionType.BLOCKS) {
-                fc.set(m.getID() + "", ((BlockMinion) m));
-            } else if (m.getType() == MinionType.CROPS) {
-                fc.set(m.getID() + "", ((CropMinion) m));
-            } else {
-                fc.set(m.getID() + "", ((MobMinion) m));
-            }
-
-            try {
-                fc.save(FileManager.getInstance().getMinionsFile(m.getType()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        saveConfig();
-
+    public static IslandBuffer getBuffer(){
+        return islandBuffer;
     }
 
-    @EventHandler
-    public void onRightClick(PlayerInteractAtEntityEvent e) {
 
-        if (e.getRightClicked().getType() == EntityType.ARMOR_STAND) {
-            Entity en = e.getRightClicked();
-            Player p = e.getPlayer();
 
-            for (Minion m : MINIONS) {
-
-                Location l1 = en.getLocation();
-                Location l2 = m.getLocation();
-
-                if (l1.getWorld().getName().equals(l2.getWorld().getName())) {
-
-                    if (l1.getX() == l2.getX() && l1.getY() == l2.getY() && l1.getZ() == l2.getZ()) {
-
-                        e.setCancelled(true);
-
-                        if (m.getOwnerID().equals(p.getUniqueId())) {
-                            p.openInventory(m.getInventory());
-                        }
-
-                        break;
-
-                    }
-
-                }
-
-            }
-        }
-    }
-
-    @EventHandler
-    public void onDamage(EntityDamageEvent e) {
-
-        if (e.getEntityType() == EntityType.ARMOR_STAND) {
-            Entity en = e.getEntity();
-
-            for (Minion m : MINIONS) {
-
-                Location l1 = en.getLocation();
-                Location l2 = m.getLocation();
-
-                if (l1.getWorld().getName().equals(l2.getWorld().getName())) {
-
-                    if (l1.getX() == l2.getX() && l1.getY() == l2.getY() && l1.getZ() == l2.getZ()) {
-
-                        e.setCancelled(true);
-
-                        break;
-
-                    }
-
-                }
-
-            }
-        }
-
-    }
-
-    public ProtocolManager getProtocolManager() {
-        return protocolManager;
-    }
-
-    @EventHandler
-    public void onDeath(EntityDeathEvent e) {
-        if (antiDrop.contains(e.getEntity())) {
-
-            for (ItemStack item : e.getDrops()) {
-                antiDropMinion.get(e.getEntity()).getInventory().addItem(item);
-            }
-            e.getDrops().clear();
-            antiDrop.remove(e.getEntity());
-            antiDropMinion.remove(e.getEntity());
-        }
-    }
 }

@@ -3,6 +3,7 @@ package me.zeroseven.island.database;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.sk89q.worldedit.world.block.BlockType;
+import me.zeroseven.island.database.operator.MySQLContainer;
 import me.zeroseven.island.database.operator.MySQLProvider;
 import me.zeroseven.island.minions.Minion;
 import me.zeroseven.island.minions.MinionType;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.swing.*;
 import java.lang.reflect.Type;
@@ -27,9 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class MinionsDAO extends MySQLProvider {
-    public MinionsDAO(FileConfiguration config) {
-        super(config);
+public class MinionsDAO extends MySQLContainer {
+
+    public MinionsDAO(JavaPlugin instance) {
+        super(instance);
     }
 
     public void createTable(){
@@ -128,5 +131,9 @@ public class MinionsDAO extends MySQLProvider {
         Type itemStackListType = new TypeToken<List<ItemStack>>() {}.getType();
         return gson.fromJson(drops, itemStackListType);
     }
+    private Connection getConnection(){
+        return getConnection("minions.db");
+    }
+
 
 }

@@ -1,18 +1,21 @@
 package me.zeroseven.island.database;
 
+import me.zeroseven.island.database.operator.MySQLContainer;
 import me.zeroseven.island.database.operator.MySQLProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayersDAO extends MySQLProvider {
+public class PlayersDAO extends MySQLContainer {
 
-    public PlayersDAO(FileConfiguration config) {
-        super(config);
+
+    public PlayersDAO(JavaPlugin instance) {
+        super(instance);
     }
 
     public void createTable() {
@@ -82,6 +85,10 @@ public class PlayersDAO extends MySQLProvider {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private Connection getConnection(){
+        return getConnection("players.db");
     }
 }
 

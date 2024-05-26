@@ -1,4 +1,4 @@
-package me.zeroseven.island.islands;
+package me.zeroseven.island.island;
 
 import me.zeroseven.island.minions.Minion;
 import org.bukkit.Location;
