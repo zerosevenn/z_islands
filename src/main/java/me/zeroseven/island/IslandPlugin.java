@@ -9,15 +9,13 @@ import me.zeroseven.island.config.FileManager;
 import me.zeroseven.island.database.IslandDAO;
 import me.zeroseven.island.database.MinionsDAO;
 import me.zeroseven.island.database.PlayersDAO;
-import me.zeroseven.island.listeners.MinionGUIListener;
-import me.zeroseven.island.listeners.MinionListeners;
-import me.zeroseven.island.listeners.MinionSpawnerListener;
-import me.zeroseven.island.listeners.UpgradeGUIListener;
+import me.zeroseven.island.listeners.*;
 import me.zeroseven.island.minions.Minion;
 import me.zeroseven.island.minions.MinionType;
 import me.zeroseven.island.minions.types.BlockMinion;
 import me.zeroseven.island.minions.types.CropMinion;
 import me.zeroseven.island.minions.types.MobMinion;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -57,6 +55,7 @@ public final class IslandPlugin extends JavaPlugin{
         getServer().getPluginManager().registerEvents(new UpgradeGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionSpawnerListener(), this);
+        getServer().getPluginManager().registerEvents(new IslandListeners(), this);
         getCommand("minion").setExecutor(new MinionCommand());
         getCommand("island").setExecutor(new IslandCommand(this));
         ConfigurationSerialization.registerClass(BlockMinion.class, "BlockMinion");
@@ -66,6 +65,7 @@ public final class IslandPlugin extends JavaPlugin{
         saveDefaultConfig();
         TOTAL = getConfig().getInt("total");
         setupMinions();
+        loadPlayers();
 
     }
 
@@ -73,6 +73,18 @@ public final class IslandPlugin extends JavaPlugin{
     public void onDisable() {
         saveMinions();
         saveConfig();
+        savePlayers();
+    }
+
+    public void savePlayers(){
+        for(Player player : Bukkit.getOnlinePlayers()){
+            getBuffer().savePlayerIsland(player);
+        }
+    }
+    public void loadPlayers(){
+        for(Player player : Bukkit.getOnlinePlayers()){
+            getBuffer().loadPlayerIsland(player);
+        }
     }
 
     public void setupDAO(){
