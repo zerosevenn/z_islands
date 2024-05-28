@@ -47,7 +47,7 @@ public class MinionsDAO extends MySQLContainer {
                 "    level INT," +
                 "    experience DOUBLE," +
                 "    drops TEXT," +
-                "    FOREIGN KEY (owner_uuid) REFERENCES Owner(uuid)" +
+                "    FOREIGN KEY (owner) REFERENCES ISLAND(owner))" +
                 ");";
         try(Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)){
             preparedStatement.execute();

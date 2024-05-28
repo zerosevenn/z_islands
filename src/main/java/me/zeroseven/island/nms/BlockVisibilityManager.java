@@ -50,12 +50,10 @@ public class BlockVisibilityManager {
         int chunkZ = event.getPacket().getIntegers().read(1);
         short chunkSectionCount = event.getPacket().getShorts().read(0);
 
-        // Loop through each chunk section
         for (int i = 0; i < chunkSectionCount; i++) {
             short blockCount = event.getPacket().getShorts().read(1 + i * 2);
             byte[] blockDataArray = event.getPacket().getByteArrays().read(0);
 
-            // Loop through each block in the chunk section
             for (int j = 0; j < blockCount; j++) {
                 int blockOffset = 2 + j * 8;
                 long blockData = readVarInt(blockDataArray, blockOffset);

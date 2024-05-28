@@ -26,7 +26,7 @@ public class IslandDAO extends MySQLContainer {
 
 
     public void createTable(){
-        String sql = "CREATE TABLE IF NOT EXISTS ISLAND(owner VARCHAR(36), spawnLocation STRING, location STRING)";
+        String sql = "CREATE TABLE IF NOT EXISTS ISLAND(owner VARCHAR(36) PRIMARY KEY, spawnLocation STRING, location STRING)";
         try(Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)){
             preparedStatement.execute();
         }catch (SQLException e){
