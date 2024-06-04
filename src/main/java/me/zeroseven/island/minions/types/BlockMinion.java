@@ -42,14 +42,14 @@ public class BlockMinion extends Minion implements ConfigurationSerializable {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void spawn() {
-		
+
 		Location location = getLocation();
 		Player player = Bukkit.getPlayer(getOwnerID());
 		location.setY(location.getBlockY());
 		location.setX(location.getBlockX() + 0.5D);
 		location.setZ(location.getBlockZ() + 0.5D);
 		location.setDirection(player.getLocation().subtract(location).toVector());
-		
+
 		ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
 		SkullMeta sm = (SkullMeta) skull.getItemMeta();
 		sm.setOwner("Ayush_03");
@@ -68,12 +68,10 @@ public class BlockMinion extends Minion implements ConfigurationSerializable {
 		stand.setBoots(new ItemStack(Material.LEATHER_BOOTS));
 		stand.setGravity(false);
 		stand.setCustomNameVisible(true);
-		stand.setCustomName("§e§lLevel: §f" + getLevel() +
-				" | §a§lXP: §f" + getExperience() +
-				" | §5§lDrops: §f" + getDrops().length);
+		stand.setCustomName("§e§lLevel: §f" + getLevel() + "\n§a§lXP: §f" + getExperience() + "\n§5§lDrops: §f" + getDrops().length);
 
 		new BukkitRunnable() {
-			
+
 			@Override
 			public void run() {
 				breakBlock();

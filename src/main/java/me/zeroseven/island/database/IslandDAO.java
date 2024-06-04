@@ -67,6 +67,9 @@ public class IslandDAO extends MySQLContainer {
 
 
     public Location getLocation(String location){
+        if(location == null){
+            return null;
+        }
         String[] locations = location.split(",");
         World world= Bukkit.getWorld(locations[0]);
         int x = Integer.parseInt(locations[1]);

@@ -1,5 +1,7 @@
 package me.zeroseven.island.GUI;
 
+import me.zeroseven.island.config.MenuConfiguration;
+import me.zeroseven.island.config.other.ConfigLoader;
 import me.zeroseven.island.island.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,31 +10,34 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class IslandGUI {
 
+    JavaPlugin plugin;
+    static ConfigLoader configLoader;
+
+    public IslandGUI(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.configLoader = new ConfigLoader(new MenuConfiguration(plugin).getConfiguration());
+    }
+
     public static Inventory CreateInventory(OfflinePlayer player, Island island){
         Inventory inv = Bukkit.createInventory(new IslandGUIHolder(player, island), 27, "Island");
-        ItemStack pane = icon(Material.WHITE_STAINED_GLASS_PANE, ChatColor.BLACK + "");
-
-
-
+        ItemStack pane = configLoader.getItemStack("Island.Background");
+        ItemStack theme = configLoader.getItemStack("Island.Theme");
+        ItemStack minions = configLoader.getItemStack("Island.Minions");
+        ItemStack shops = configLoader.getItemStack("Island.Shops");
 
         for(int i = 0; i < inv.getSize(); i++){
             inv.setItem(i, pane);
         }
 
+        inv.setItem(10, theme);
+        inv.setItem(13, minions);
+        inv.setItem(16, shops);
+
         return inv;
-    }
-
-    private static ItemStack icon(Material mat, String displayName) {
-
-        ItemStack item = new ItemStack(mat);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        item.setItemMeta(meta);
-
-        return item;
     }
 
 }

@@ -36,19 +36,20 @@ public class MinionsDAO extends MySQLContainer {
     }
 
     public void createTable(){
-        String sql = "CREATE TABLE Minion (" +
-                "    id INT AUTO_INCREMENT PRIMARY KEY," +
-                "    type VARCHAR(50)," +
-                "    location_x DOUBLE," +
-                "    location_y DOUBLE," +
-                "    location_z DOUBLE," +
-                "    world_name VARCHAR(100)," +
-                "    owner_uuid VARCHAR(36)," +
-                "    level INT," +
-                "    experience DOUBLE," +
-                "    drops TEXT," +
-                "    FOREIGN KEY (owner) REFERENCES ISLAND(owner))" +
+        String sql = "CREATE TABLE IF NOT EXISTS Minion (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "type VARCHAR(50)," +
+                "location_x DOUBLE," +
+                "location_y DOUBLE," +
+                "location_z DOUBLE," +
+                "world_name VARCHAR(100)," +
+                "owner_uuid VARCHAR(36)," +
+                "level INT," +
+                "experience DOUBLE," +
+                "drops TEXT," +
+                "FOREIGN KEY (owner_uuid) REFERENCES ISLAND(owner)" +
                 ");";
+
         try(Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)){
             preparedStatement.execute();
         }catch (SQLException e){
@@ -83,6 +84,10 @@ public class MinionsDAO extends MySQLContainer {
         try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, ownerUuid.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.getString("type") == null)
+                return null;
+
             switch (resultSet.getString("type")){
                 case "block" ->
                     minions.add(new BlockMinion(

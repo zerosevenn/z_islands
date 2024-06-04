@@ -1,0 +1,58 @@
+Minion:
+  Tapper:
+    displayName: '&0'
+    material: YELLOW_STAINED_GLASS_PANE
+  Background:
+    displayName: '&0'
+    material: WHITE_STAINED_GLASS_PANE
+  GetItems:
+    displayName: '&aGet Items'
+    material: ENDER_CHEST
+  Bedrock:
+    displayName: '&cRemove Minion'
+    material: BEDROCK
+Island:
+  Background:
+    displayName: '&0'
+    material: WHITE_STAINED_GLASS_PANE
+  Theme:
+    displayName: '&bSelect Theme'
+    material: PURPLE_GLAZED_TERRACOTTA
+  Minions:
+    displayName: '&eMinions'
+    material: YELLOW_GLAZED_TERRACOTTA
+  Shops:
+    displayName: '&6Your Shop'
+    material: BLAZE_POWDER
+Island_Theme:
+  Background:
+    displayName: '&0'
+    material: GRAY_STAINED_GLASS_PANE
+    Black:
+      displayName: '&0'
+      material: LEGACY_IRON_FENCE
+    IslandDesert:
+      displayName: '&6Select Desert Theme'
+      material: SAND
+      lore:
+        - '&7Click to select'
+    IslandMedieval:
+      displayName: '&6Select Medieval Theme'
+      material: MOSSY_STONE_BRICKS
+      lore:
+        - '&7Click to select'
+    IslandNether:
+      displayName: '&6Select Nether Theme'
+      material: NETHER_BRICKS
+      lore:
+        - '&7Click to select'
+    IslandJungle:
+      displayName: '&6Select Jungle Theme'
+      material: JUNGLE_WOOD
+      lore:
+        - '&7Click to select'
+    IslandDefault:
+      displayName: '&6Select Default Theme'
+      material: CYAN_TERRACOTTA
+      lore:
+        - '&7Click to select'

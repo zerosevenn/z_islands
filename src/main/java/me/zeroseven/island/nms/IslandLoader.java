@@ -42,7 +42,7 @@ public class IslandLoader {
     }
 
 
-    public void loadSchematic(String schematicFileName, World world, Location location, Player player) throws IOException {
+    public void loadSchematic(String schematicFileName, World world, Location location, Player player) {
         com.sk89q.worldedit.world.World worldEdit = BukkitAdapter.adapt(world);
 
         File schematicFile = new File(plugin.getDataFolder(), "schematics/" + schematicFileName);

@@ -12,6 +12,6 @@ public class IslandListeners implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
-        event.setCancelled(true);
+
     }
 }

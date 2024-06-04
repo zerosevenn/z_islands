@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="Blockify-1.1.1-beta">
+  <library name="PacketWrapper">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Downloads/Blockify-1.1.1-beta.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/PacketWrapper.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

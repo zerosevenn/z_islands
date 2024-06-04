@@ -1,4 +1,4 @@
-package me.zeroseven.island.config;
+package me.zeroseven.island.config.other;
 
 import java.io.File;
 import java.io.IOException;

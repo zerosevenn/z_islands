@@ -1,5 +1,7 @@
 package me.zeroseven.island.commands;
 
+import me.zeroseven.island.GUI.IslandGUI;
+import me.zeroseven.island.GUI.IslandThemeGUI;
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.island.Island;
@@ -31,34 +33,48 @@ public class IslandCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if(!cmd.getName().equalsIgnoreCase("island")){
+        if (!cmd.getName().equalsIgnoreCase("island")) {
             return false;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command!");
             return true;
         }
 
-        Player player = (Player) sender;
-
-        Location playerLocation = player.getLocation();
-
-        Location islandLocation = new Location(playerLocation.getWorld(), playerLocation.getX() + 58.00,
-                playerLocation.getY() + 70.00, playerLocation.getZ() + 31);
-
-        Island island = new Island(islandLocation, playerLocation, player, new ArrayList<>(), new ArrayList<>());
-        islandBuffer.updatePlayerIsland(player, island);
-
-        try {
-            islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(args.length == 0){
+            Island island = islandBuffer.getPlayerIsland(player);
+            if(island == null){
+                player.sendMessage(ChatColor.RED + "You are not on a Island!");
+                return false;
+            }
+            player.openInventory(IslandGUI.CreateInventory(player, island));
         }
 
-        player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
-        player.teleport(islandLocation);
+        if (args[0].equalsIgnoreCase("create")) {
+            Location playerLocation = player.getLocation();
 
+            Location islandLocation = new Location(playerLocation.getWorld(), playerLocation.getX() + 58.00,
+                    playerLocation.getY() + 70.00, playerLocation.getZ() + 31);
+
+            Island island = new Island(islandLocation, playerLocation, player, new ArrayList<>(), new ArrayList<>());
+            islandBuffer.updatePlayerIsland(player, island);
+
+            islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
+
+            player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
+            player.teleport(islandLocation);
+
+        }
+
+        if(args[0].equalsIgnoreCase("theme")){
+            Island island = islandBuffer.getPlayerIsland(player);
+            if(island == null){
+                player.sendMessage(ChatColor.RED + "You are not on a Island!");
+                return false;
+            }
+            player.openInventory(IslandThemeGUI.createInventory(player, island));
+        }
         return false;
     }
 
