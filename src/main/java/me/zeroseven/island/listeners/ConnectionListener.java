@@ -16,7 +16,7 @@ public class ConnectionListener implements Listener {
 
     public ConnectionListener(JavaPlugin instance) {
         this.instance = instance;
-        this.islandBuffer = IslandPlugin.getBuffer();
+        this.islandBuffer = IslandPlugin.getIslandBuffer();
     }
 
     @EventHandler

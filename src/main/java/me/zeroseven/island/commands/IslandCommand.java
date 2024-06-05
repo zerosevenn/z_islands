@@ -6,6 +6,7 @@ import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.island.Island;
 import me.zeroseven.island.nms.IslandLoader;
+import me.zeroseven.island.nms.PacketBlockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,10 +25,12 @@ public class IslandCommand implements CommandExecutor {
 
     private IslandLoader islandLoader;
     private IslandBuffer islandBuffer;
+    private PacketBlockManager packetBlockManager;
 
     public IslandCommand(IslandPlugin instance) {
         this.islandLoader = new IslandLoader(instance);
-        this.islandBuffer = IslandPlugin.getBuffer();
+        this.islandBuffer = IslandPlugin.getIslandBuffer();
+        this.packetBlockManager = IslandPlugin.getBlockManager();
     }
 
     @Override
@@ -61,6 +64,8 @@ public class IslandCommand implements CommandExecutor {
             islandBuffer.updatePlayerIsland(player, island);
 
             islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
+
+            packetBlockManager.getBlockSet().put(player.getUniqueId(), islandLoader.getVisibleBlocks());
 
             player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
             player.teleport(islandLocation);

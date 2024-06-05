@@ -1,26 +1,16 @@
 package me.zeroseven.island.nms;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.injector.packet.PacketRegistry;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.registry.BundledBlockRegistry;
 import me.zeroseven.island.IslandPlugin;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,19 +18,20 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class IslandLoader {
 
     private IslandPlugin plugin;
+    private PacketBlockManager packetBlockManager;
+    private final Set<BlockPosition> visibleBlocks = new HashSet<>();
+
 
     public IslandLoader(IslandPlugin instance) {
         this.plugin = instance;
+        packetBlockManager = IslandPlugin.getBlockManager();
     }
-
-    public void deleteSchematic(Location location){
-
-    }
-
 
     public void loadSchematic(String schematicFileName, World world, Location location, Player player) {
         com.sk89q.worldedit.world.World worldEdit = BukkitAdapter.adapt(world);
@@ -69,6 +60,8 @@ public class IslandLoader {
                 if (material != null && material != Material.AIR) {
                     BlockVector3 relativePosition = blockVector3.subtract(origin).add(pastePosition);
                     Location blockLocation = new Location(world, relativePosition.getX(), relativePosition.getY(), relativePosition.getZ());
+                    BlockPosition blockPosition = new BlockPosition(relativePosition.getX(), relativePosition.getY(), relativePosition.getZ());
+                    visibleBlocks.add(blockPosition);
                     sendBlockChange(player, blockLocation, material);
                 } else {
 
@@ -103,7 +96,9 @@ public class IslandLoader {
         }
         return null;
     }
+
+    public Set<BlockPosition> getVisibleBlocks() {
+        return visibleBlocks;
+    }
 }
-
-
 

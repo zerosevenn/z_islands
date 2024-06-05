@@ -38,7 +38,6 @@ public class IslandBuffer {
         if(!islandHashMap.containsKey(player)){
             return;
         }
-        islandDAO.insertIsland(getPlayerIsland(player));
     }
 
 }
