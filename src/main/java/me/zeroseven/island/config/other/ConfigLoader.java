@@ -14,6 +14,7 @@ public class ConfigLoader {
 
     public ConfigLoader(FileConfiguration fileConfiguration) {
         this.fileConfiguration = fileConfiguration;
+        System.out.println("File loaded!!");
     }
 
     public List<Integer> getIntList(String path) {

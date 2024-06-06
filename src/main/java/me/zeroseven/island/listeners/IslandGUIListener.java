@@ -24,6 +24,11 @@ public class IslandGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
+
+        if(event.getClickedInventory() == null){
+            return;
+        }
+
         if(event.getInventory().getHolder() instanceof IslandGUIHolder){
             event.setCancelled(true);
 

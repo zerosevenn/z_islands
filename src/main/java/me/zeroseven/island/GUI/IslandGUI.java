@@ -14,15 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class IslandGUI {
 
-    JavaPlugin plugin;
-    static ConfigLoader configLoader;
-
-    public IslandGUI(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.configLoader = new ConfigLoader(new MenuConfiguration(plugin).getConfiguration());
-    }
-
     public static Inventory CreateInventory(OfflinePlayer player, Island island){
+        ConfigLoader configLoader = new ConfigLoader(new MenuConfiguration((JavaPlugin) Bukkit.getPluginManager().getPlugin("zIsland")).getConfiguration());
         Inventory inv = Bukkit.createInventory(new IslandGUIHolder(player, island), 27, "Island");
         ItemStack pane = configLoader.getItemStack("Island.Background");
         ItemStack theme = configLoader.getItemStack("Island.Theme");

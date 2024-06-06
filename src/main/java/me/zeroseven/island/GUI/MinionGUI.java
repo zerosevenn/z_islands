@@ -1,5 +1,7 @@
 package me.zeroseven.island.GUI;
 
+import me.zeroseven.island.config.MenuConfiguration;
+import me.zeroseven.island.config.other.ConfigLoader;
 import me.zeroseven.island.minions.Minion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 
@@ -16,13 +19,15 @@ public class MinionGUI {
 	
 	@SuppressWarnings("deprecation")
 	public static Inventory createInventory(OfflinePlayer p, Minion m) {
-		
+
+		ConfigLoader configLoader = new ConfigLoader(new MenuConfiguration((JavaPlugin) Bukkit.getPluginManager().getPlugin("zIsland")).getConfiguration());
+
 		Inventory inv = Bukkit.createInventory(new MinionGUIHolder(p, m), 27, "Minion");
 		
-		ItemStack yellow = icon(Material.YELLOW_STAINED_GLASS_PANE, ChatColor.BLACK + "");
-		ItemStack pane = icon(Material.WHITE_STAINED_GLASS_PANE, ChatColor.BLACK + "");
-		ItemStack chest = icon(Material.ENDER_CHEST, ChatColor.GREEN + "Get Items");
-		ItemStack bedrock = icon(Material.BEDROCK, ChatColor.RED + "Remove Minion");
+		ItemStack yellow = configLoader.getItemStack("Minion.Tapper");
+		ItemStack pane = configLoader.getItemStack("Minion.Background");
+		ItemStack chest = configLoader.getItemStack("Minion.GetItems");
+		ItemStack bedrock = configLoader.getItemStack("Minion.Bedrock");
 
 		for(int i = 0; i < inv.getSize(); i++){
 			inv.setItem(i, pane);

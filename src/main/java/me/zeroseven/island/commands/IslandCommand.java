@@ -45,43 +45,46 @@ public class IslandCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length == 0){
+        if (args.length == 0) {
             Island island = islandBuffer.getPlayerIsland(player);
-            if(island == null){
+            if (island == null) {
                 player.sendMessage(ChatColor.RED + "You are not on a Island!");
                 return false;
             }
             player.openInventory(IslandGUI.CreateInventory(player, island));
         }
 
-        if (args[0].equalsIgnoreCase("create")) {
-            Location playerLocation = player.getLocation();
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("create")) {
+                Location playerLocation = player.getLocation();
 
-            Location islandLocation = new Location(playerLocation.getWorld(), playerLocation.getX() + 58.00,
-                    playerLocation.getY() + 70.00, playerLocation.getZ() + 31);
+                Location islandLocation = new Location(playerLocation.getWorld(), playerLocation.getX() + 58.00,
+                        playerLocation.getY() + 70.00, playerLocation.getZ() + 31);
 
-            Island island = new Island(islandLocation, playerLocation, player, new ArrayList<>(), new ArrayList<>());
-            islandBuffer.updatePlayerIsland(player, island);
+                Island island = new Island(islandLocation, playerLocation, player, new ArrayList<>(), new ArrayList<>());
+                islandBuffer.updatePlayerIsland(player, island);
 
-            islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
+                islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
 
-            packetBlockManager.getBlockSet().put(player.getUniqueId(), islandLoader.getVisibleBlocks());
+                packetBlockManager.getBlockSet().put(player.getUniqueId(), islandLoader.getVisibleBlocks());
 
-            player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
-            player.teleport(islandLocation);
+                player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
+                player.teleport(islandLocation);
 
-        }
-
-        if(args[0].equalsIgnoreCase("theme")){
-            Island island = islandBuffer.getPlayerIsland(player);
-            if(island == null){
-                player.sendMessage(ChatColor.RED + "You are not on a Island!");
-                return false;
             }
-            player.openInventory(IslandThemeGUI.createInventory(player, island));
+
+            if (args[0].equalsIgnoreCase("theme")) {
+                Island island = islandBuffer.getPlayerIsland(player);
+                if (island == null) {
+                    player.sendMessage(ChatColor.RED + "You are not on a Island!");
+                    return false;
+                }
+                player.openInventory(IslandThemeGUI.createInventory(player, island));
+            }
         }
         return false;
     }
+
 
 
 }
