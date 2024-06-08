@@ -1,6 +1,5 @@
 package me.zeroseven.island.nms;
 
-import com.comphenix.packetwrapper.WrapperPlayServerBlockChange;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -34,12 +33,7 @@ public class PacketBlockManager extends PacketAdapter {
         }
 
         if (event.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) {
-            WrapperPlayServerBlockChange wrapper = new WrapperPlayServerBlockChange(event.getPacket());
-            BlockPosition blockLocation = wrapper.getLocation();
-
-            if (hasBeenFaked(event.getPlayer(), blockLocation)) {
-                event.setCancelled(true);
-            }
+        
         }
     }
 

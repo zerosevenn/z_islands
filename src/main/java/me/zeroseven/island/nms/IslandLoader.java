@@ -3,12 +3,18 @@ package me.zeroseven.island.nms;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import me.zeroseven.island.IslandPlugin;
@@ -31,6 +37,31 @@ public class IslandLoader {
     public IslandLoader(IslandPlugin instance) {
         this.plugin = instance;
         packetBlockManager = IslandPlugin.getBlockManager();
+    }
+    public void loadSchematicVisible(String schematicFileName, World world, Location location) {
+        com.sk89q.worldedit.world.World worldEdit = BukkitAdapter.adapt(world);
+
+        File schematicFile = new File(plugin.getDataFolder(), "schematics/" + schematicFileName);
+        ClipboardFormat clipboardFormat = ClipboardFormats.findByFile(schematicFile);
+        ClipboardReader clipboardReader = null;
+
+        try {
+           clipboardReader  = clipboardFormat.getReader(new FileInputStream(schematicFile));
+        }catch (IOException e){
+            e.printStackTrace();;
+        }
+
+        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(worldEdit, -1)) {
+            Clipboard clipboard = clipboardReader.read();
+            Operation operation = (Operation) new ClipboardHolder(clipboard)
+                    .createPaste(editSession)
+                    .to(BlockVector3.at(location.getX(), location.getY(), location.getZ()))
+                    .ignoreAirBlocks(false)
+                    .build();
+            Operations.complete((com.sk89q.worldedit.function.operation.Operation) operation);
+        } catch (IOException | WorldEditException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void loadSchematic(String schematicFileName, World world, Location location, Player player) {

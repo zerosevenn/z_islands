@@ -5,6 +5,8 @@ import com.comphenix.protocol.ProtocolManager;
 import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.commands.IslandCommand;
 import me.zeroseven.island.commands.MinionCommand;
+import me.zeroseven.island.commands.SellCommand;
+import me.zeroseven.island.config.IslandConfiguration;
 import me.zeroseven.island.config.MenuConfiguration;
 import me.zeroseven.island.config.other.FileManager;
 import me.zeroseven.island.database.IslandDAO;
@@ -52,9 +54,8 @@ public final class IslandPlugin extends JavaPlugin {
         registerEvents();
         registerCommands();
         registerSerializations();
+        saveConfigs();
 
-        new MenuConfiguration(this).saveDefaultConfig();
-        saveDefaultConfig();
 
         TOTAL = getConfig().getInt("total");
         setupMinions();
@@ -68,6 +69,13 @@ public final class IslandPlugin extends JavaPlugin {
         savePlayers();
     }
 
+    private void saveConfigs(){
+        new MenuConfiguration(this).saveDefaultConfig();
+        new IslandConfiguration(this).saveDefaultConfig();
+        saveDefaultConfig();
+    }
+
+
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new MinionListeners(), this);
         getServer().getPluginManager().registerEvents(new UpgradeGUIListener(this), this);
@@ -80,6 +88,7 @@ public final class IslandPlugin extends JavaPlugin {
     private void registerCommands() {
         getCommand("minion").setExecutor(new MinionCommand());
         getCommand("island").setExecutor(new IslandCommand(this));
+        getCommand("sell").setExecutor(new SellCommand());
     }
 
     private void registerSerializations() {

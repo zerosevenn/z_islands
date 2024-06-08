@@ -1,0 +1,14 @@
+World: world
+MainIslandLocation:
+  x: 300
+  y: 140
+  z: 300
+  packet_loaded: true
+PlayerIslandLocation:
+  x:
+  y:
+  z:
+BridgeLocation:
+  x:
+  y:
+  z:

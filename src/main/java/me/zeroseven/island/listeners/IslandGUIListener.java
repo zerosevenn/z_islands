@@ -36,6 +36,8 @@ public class IslandGUIListener implements Listener {
                 return;
             }
 
+
+
             IslandGUIHolder islandGUIHolder = (IslandGUIHolder) event.getClickedInventory().getHolder();
 
             Island island = islandGUIHolder.getIsland();
@@ -47,13 +49,13 @@ public class IslandGUIListener implements Listener {
             }
 
             switch (event.getRawSlot()){
-                case 30 -> islandLoader.loadSchematic("desertisland.schem", islandLocation.getWorld(), islandLocation, player);
-                case 13 -> islandLoader.loadSchematic("netherisland.schem", islandLocation.getWorld(), islandLocation, player);
+                case 14 -> islandLoader.loadSchematic("desertisland.schem", islandLocation.getWorld(), islandLocation, player);
+                case 12 -> islandLoader.loadSchematic("netherisland.schem", islandLocation.getWorld(), islandLocation, player);
                 case 11 -> islandLoader.loadSchematic("medievalisland.schem", islandLocation.getWorld(), islandLocation, player);
                 case 15 -> islandLoader.loadSchematic("jungleisland.schem", islandLocation.getWorld(), islandLocation, player);
-                case 32 -> islandLoader.loadSchematic("positionisland.schem", islandLocation.getWorld(), islandLocation, player);
             }
 
+            System.out.println("island teleporting");
             player.teleport(island.getSpawnLocation());
 
         }
