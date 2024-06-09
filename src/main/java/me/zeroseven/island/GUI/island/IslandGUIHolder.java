@@ -1,4 +1,4 @@
-package me.zeroseven.island.GUI;
+package me.zeroseven.island.GUI.island;
 
 import me.zeroseven.island.island.Island;
 import me.zeroseven.island.minions.Minion;

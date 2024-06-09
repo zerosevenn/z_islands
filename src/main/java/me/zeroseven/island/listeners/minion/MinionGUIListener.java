@@ -1,8 +1,8 @@
-package me.zeroseven.island.listeners;
+package me.zeroseven.island.listeners.minion;
 
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.minions.Minion;
-import me.zeroseven.island.GUI.MinionGUIHolder;
+import me.zeroseven.island.GUI.minion.MinionGUIHolder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

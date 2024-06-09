@@ -1,10 +1,9 @@
-package me.zeroseven.island.GUI;
+package me.zeroseven.island.GUI.minion;
 
 import me.zeroseven.island.config.MenuConfiguration;
 import me.zeroseven.island.config.other.ConfigLoader;
 import me.zeroseven.island.minions.Minion;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;

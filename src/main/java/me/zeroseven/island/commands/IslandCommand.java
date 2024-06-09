@@ -1,25 +1,20 @@
 package me.zeroseven.island.commands;
 
-import me.zeroseven.island.GUI.IslandGUI;
-import me.zeroseven.island.GUI.IslandThemeGUI;
+import me.zeroseven.island.GUI.island.IslandGUI;
+import me.zeroseven.island.GUI.island.IslandThemeGUI;
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.config.IslandConfiguration;
 import me.zeroseven.island.island.Island;
 import me.zeroseven.island.nms.IslandLoader;
 import me.zeroseven.island.nms.PacketBlockManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class IslandCommand implements CommandExecutor {
@@ -60,28 +55,72 @@ public class IslandCommand implements CommandExecutor {
         }
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("create")) {
-                Location playerLocation = player.getLocation();
 
-                Location islandLocation = getConfigLocation(islandConfiguration, "MainIslandLocation");
+            Chunk playerChunk = player.getLocation().getChunk();
+            World world = player.getWorld();
 
-                Island island = new Island(islandLocation, playerLocation, player, new ArrayList<>(), new ArrayList<>());
+            if(args[0].equalsIgnoreCase("buffer")){
+                Island island = islandBuffer.getPlayerIsland(player);
+                Location islandLocation =island.getLocation();
+                player.sendMessage(ChatColor.GREEN + "Loading buffer informations: "
+                        , "Location: x-" + (int) islandLocation.getX() + ", y-" + (int) islandLocation.getY() + ", z-" + (int) islandLocation.getZ()
+                        , "Owner: " + island.getOwner().getName());
+                return true;
+            }
+
+            if(args[0].equalsIgnoreCase("refresh")){
+
+                int west = -1;
+                int south = 1;
+                int east = 3;
+                int north = -3;
+
+                for (int x = west; x <= east; x++) {
+                    for (int z = north; z <= south; z++) {
+                        Chunk chunk = world.getChunkAt(playerChunk.getX() + x, playerChunk.getZ() + z);
+                        world.refreshChunk(chunk.getX(), chunk.getZ());
+                    }
+                }
+
+                player.sendMessage(ChatColor.GREEN + "Island clear.");
+            }
+
+            if(args[0].equalsIgnoreCase("chunkrefresh")){
+
+                int viewDistance = player.getServer().getViewDistance();
+
+                int west = -viewDistance;
+                int east = viewDistance;
+                int north = -viewDistance;
+                int south = viewDistance;
+
+                for (int x = west; x <= east; x++) {
+                    for (int z = north; z <= south; z++) {
+                        Chunk chunk = world.getChunkAt(playerChunk.getX() + x, playerChunk.getZ() + z);
+                        world.refreshChunk(chunk.getX(), chunk.getZ());
+                    }
+                }
+                player.sendMessage(ChatColor.GREEN + "Chunks visíveis recarregados.");
+            }
+
+            if(args[0].equalsIgnoreCase("load")){
+                Location loc = player.getLocation().subtract(58, 70, 28);
+
+
+                Island island = new Island(loc, loc, player, new ArrayList<>(), new ArrayList<>());
                 islandBuffer.updatePlayerIsland(player, island);
 
-                if(islandConfiguration.getBoolean("MainIslandLocation.packet_loaded"))
-                    islandLoader.loadSchematic("positionisland.schem", player.getWorld(), player.getLocation(), player);
-                else
-                    islandLoader.loadSchematicVisible("positionisland.schem", player.getWorld(), player.getLocation());
+                islandLoader.loadSchematic("positionisland.schem", loc, player);
 
                 packetBlockManager.getBlockSet().put(player.getUniqueId(), islandLoader.getVisibleBlocks());
 
                 player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
-                player.teleport(islandLocation);
 
             }
 
             if (args[0].equalsIgnoreCase("theme")) {
                 Island island = islandBuffer.getPlayerIsland(player);
+
                 if (island == null) {
                     player.sendMessage(ChatColor.RED + "You are not on a Island!");
                     return false;

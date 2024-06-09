@@ -72,6 +72,30 @@ public class PlayersDAO extends MySQLContainer {
         return members;
     }
 
+    public void updateMembers(Player player, List<Player> members) {
+        String ownerUUID = player.getUniqueId().toString();
+        String deleteSql = "DELETE FROM members WHERE owner = ?";
+        String insertSql = "INSERT INTO members (owner, member_name) VALUES (?, ?)";
+
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement deleteStatement = conn.prepareStatement(deleteSql)) {
+                deleteStatement.setString(1, ownerUUID);
+                deleteStatement.executeUpdate();
+            }
+            try (PreparedStatement insertStatement = conn.prepareStatement(insertSql)) {
+                for (Player member : members) {
+                    insertStatement.setString(1, ownerUUID);
+                    insertStatement.setString(2, member.getName());
+                    insertStatement.addBatch();
+                }
+                insertStatement.executeBatch();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void deleteMember(Player player, Player member) {
         String ownerUUID = player.getUniqueId().toString();
         String memberName = member.getName();

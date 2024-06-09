@@ -78,6 +78,27 @@ public class MinionsDAO extends MySQLContainer {
         }
     }
 
+    public void updateMinions(List<Minion> minions) {
+        String sql = "UPDATE Minion SET type = ?, location_x = ?, location_y = ?, location_z = ?, world_name = ?, level = ?, experience = ?, drops = ? WHERE id = ?";
+        try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            for (Minion minion : minions) {
+                preparedStatement.setString(1, minion.getType().toString());
+                preparedStatement.setDouble(2, minion.getLocation().getX());
+                preparedStatement.setDouble(3, minion.getLocation().getY());
+                preparedStatement.setDouble(4, minion.getLocation().getZ());
+                preparedStatement.setString(5, minion.getLocation().getWorld().getName());
+                preparedStatement.setInt(6, minion.getLevel());
+                preparedStatement.setDouble(7, minion.getExperience());
+                preparedStatement.setString(8, serializeDrops(minion.getDrops()));
+                preparedStatement.setString(9, minion.getOwnerID().toString());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Minion> selectMinionsByOwner(UUID ownerUuid) {
         String sql = "SELECT * FROM Minion WHERE owner_uuid = ?";
         List<Minion> minions = new ArrayList<>();

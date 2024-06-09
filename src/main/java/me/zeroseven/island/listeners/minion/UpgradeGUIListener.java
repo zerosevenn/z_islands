@@ -1,12 +1,12 @@
-package me.zeroseven.island.listeners;
+package me.zeroseven.island.listeners.minion;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.minions.Minion;
-import me.zeroseven.island.GUI.MinionGUI;
-import me.zeroseven.island.GUI.UpgradeGUIHolder;
+import me.zeroseven.island.GUI.minion.MinionGUI;
+import me.zeroseven.island.GUI.minion.UpgradeGUIHolder;
 import me.zeroseven.island.minions.types.BlockMinion;
 import me.zeroseven.island.minions.types.CropMinion;
 import me.zeroseven.island.minions.types.MobMinion;

@@ -1,4 +1,4 @@
-package me.zeroseven.island.GUI;
+package me.zeroseven.island.GUI.minion;
 
 import me.zeroseven.island.minions.Minion;
 import org.bukkit.Bukkit;

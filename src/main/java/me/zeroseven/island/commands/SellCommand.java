@@ -20,7 +20,6 @@ import org.bukkit.util.Vector;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,62 +35,65 @@ public class SellCommand implements CommandExecutor, Listener {
                 try {
                     double price = Double.parseDouble(args[0]);
 
-                    // Get the player's location
-                    Location location = player.getLocation();
+                    // Obtenha a localização do jogador
+                    Location location = player.getLocation().add(2, 1, 0);
                     Location blockLocation = location.clone().add(0, -1, 0);
 
-                    // Generate the End Portal Frame
-                    blockLocation.getBlock().setType(Material.END_PORTAL_FRAME);
+                    // Gera o Bloco de Barril
+                    blockLocation.getBlock().setType(Material.BARREL);
 
-                    // Place the glass block above the End Portal Frame
+                    // Coloque o bloco de vidro acima do Bloco de Barril
                     blockLocation.clone().add(0, 1, 0).getBlock().setType(Material.GLASS);
 
-                    // Get the item the player is holding
+                    // Obtenha o item que o jogador está segurando
                     ItemStack itemInHand = player.getInventory().getItemInMainHand();
                     if (itemInHand == null || itemInHand.getType() == Material.AIR) {
-                        player.sendMessage(ChatColor.RED + "You need to be holding an item to create a shop.");
+                        player.sendMessage(ChatColor.RED + "Você precisa estar segurando um item para criar uma loja.");
                         return true;
                     }
 
-                    // Create a floating item above the glass block
+                    // Crie um item flutuante acima do bloco de vidro
                     World world = player.getWorld();
-                    Item droppedItem = world.dropItem(blockLocation.clone().add(0, 1, 0), itemInHand.clone());
+                    // Definindo a posição central exata do bloco de vidro
+                    Location itemLocation = blockLocation.clone().add(0,1,0);
+                    Item droppedItem = world.dropItem(itemLocation, itemInHand.clone());
                     droppedItem.setVelocity(new Vector(0, 0, 0));
-                    droppedItem.setPickupDelay(Integer.MAX_VALUE); // Prevent item pickup
-
-                    // Schedule a task to repeatedly teleport the item to its original position
+                    droppedItem.setPickupDelay(Integer.MAX_VALUE); // Prevenir a coleta do item
+                    droppedItem.setGravity(false);
+                    droppedItem.setCanMobPickup(false);
+                    droppedItem.setCanPlayerPickup(false);
+                    droppedItem.setCustomNameVisible(false); // Oculta o nome do item
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             if (droppedItem.isValid()) {
-                                droppedItem.teleport(blockLocation.clone().add(0, 1.0, 0));
-                                droppedItem.setCanMobPickup(false);
-                                droppedItem.setGravity(false);
+                                droppedItem.teleport(itemLocation);
                             } else {
                                 this.cancel();
                             }
                         }
                     }.runTaskTimer(JavaPlugin.getProvidingPlugin(getClass()), 1L, 1L);
 
-                    // Remove the item from the player's hand
+                    // Remova o item da mão do jogador
                     player.getInventory().setItemInMainHand(null);
 
-                    // Add the item to the shop items list
+                    // Adicione o item à lista de itens da loja
                     shopItems.add(droppedItem);
 
-                    // Create holograms
+                    // Crie hologramas
                     createHolograms(location.clone().add(0, 0.5, 0), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Item: " + itemInHand.getType().name(), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Price: " + price);
 
-                    player.sendMessage(ChatColor.GREEN + "You have created a shop with the price: " + ChatColor.GOLD + price);
+                    player.sendMessage(ChatColor.GREEN + "Você criou uma loja com o preço: " + ChatColor.GOLD + price);
 
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Please enter a valid numeric value.");
+                    if(args[0].equalsIgnoreCase("mail")){
+
+                    }
+                    player.sendMessage(ChatColor.RED + "Por favor, insira um valor numérico válido.");
                 }
-            } else {
-                player.sendMessage(ChatColor.YELLOW + "Correct usage: /sell <value>");
             }
         } else {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+            sender.sendMessage(ChatColor.RED + "Apenas jogadores podem usar este comando.");
         }
         return true;
     }
@@ -103,8 +105,8 @@ public class SellCommand implements CommandExecutor, Listener {
             armorStand.setCustomNameVisible(true);
             armorStand.setInvisible(true);
             armorStand.setGravity(false);
-            armorStand.setMarker(true); // Optional: makes the hitbox very small and not interactable
-            location.add(0, 0.3, 0); // Adjust vertical distance between holograms
+            armorStand.setMarker(true); // Opcional: torna o hitbox muito pequeno e não interativo
+            location.add(0, 0.3, 0); // Ajusta a distância vertical entre os hologramas
         }
     }
 

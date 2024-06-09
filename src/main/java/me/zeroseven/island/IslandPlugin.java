@@ -12,7 +12,13 @@ import me.zeroseven.island.config.other.FileManager;
 import me.zeroseven.island.database.IslandDAO;
 import me.zeroseven.island.database.MinionsDAO;
 import me.zeroseven.island.database.PlayersDAO;
-import me.zeroseven.island.listeners.*;
+import me.zeroseven.island.listeners.ConnectionListener;
+import me.zeroseven.island.listeners.island.IslandGUIListener;
+import me.zeroseven.island.listeners.island.IslandListeners;
+import me.zeroseven.island.listeners.minion.MinionGUIListener;
+import me.zeroseven.island.listeners.minion.MinionListeners;
+import me.zeroseven.island.listeners.minion.MinionSpawnerListener;
+import me.zeroseven.island.listeners.minion.UpgradeGUIListener;
 import me.zeroseven.island.minions.Minion;
 import me.zeroseven.island.minions.MinionType;
 import me.zeroseven.island.minions.types.BlockMinion;
@@ -81,8 +87,9 @@ public final class IslandPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new UpgradeGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new MinionSpawnerListener(), this);
-        getServer().getPluginManager().registerEvents(new IslandListeners(), this);
+        getServer().getPluginManager().registerEvents(new IslandListeners(this), this);
         getServer().getPluginManager().registerEvents(new IslandGUIListener(this), this);
+        getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
     }
 
     private void registerCommands() {

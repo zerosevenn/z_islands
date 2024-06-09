@@ -24,7 +24,6 @@ public class IslandDAO extends MySQLContainer {
         this.playersDAO = new PlayersDAO(instance);
     }
 
-
     public void createTable(){
         String sql = "CREATE TABLE IF NOT EXISTS ISLAND(owner VARCHAR(36) PRIMARY KEY, spawnLocation STRING, location STRING)";
         try(Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)){
@@ -35,11 +34,20 @@ public class IslandDAO extends MySQLContainer {
     }
 
     public void insertIsland(Island island){
+
+        if(getIsland(island.getOwner()) != null){
+            updateIsland(island);
+            return;
+        }
+
         String sql = "INSERT INTO ISLAND(owner, spawnLocation, location) VALUES (?,?,?)";
+
         try(Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)){
-            stm.setString(0, island.getOwner().getName());
-            stm.setString(1, setLocation(island.getSpawnLocation()));
-            stm.setString(2, setLocation(island.getLocation()));
+            stm.setString(1, island.getOwner().getName());
+            stm.setString(2, setLocation(island.getSpawnLocation()));
+            stm.setString(3, setLocation(island.getLocation()));
+            playersDAO.insertMembers(island.getOwner(), island.getMembers());
+            minionsDAO.insertMinions(island.getMinions());
             stm.execute();
         }catch (SQLException e){
             e.printStackTrace();
@@ -47,24 +55,41 @@ public class IslandDAO extends MySQLContainer {
     }
 
     public Island getIsland(Player owner){
-        String sql = "SELECT * FROM ISLAND";
+        String sql = "SELECT * FROM ISLAND WHERE owner = ?";
         try(Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)){
+            stm.setString(1, owner.getName());
             ResultSet rs = stm.executeQuery();
-            String spawnLocationString = rs.getString("spawnLocation");
-            String locationString = rs.getString("location");
-            Location spawnLocation = getLocation(spawnLocationString);
-            Location location = getLocation(locationString);
-            return new Island(
-                    spawnLocation, location, owner,
-                    playersDAO.getMembers(owner),
-                    minionsDAO.selectMinionsByOwner(owner.getUniqueId())
-            );
+            if (rs.next()) {
+                String spawnLocationString = rs.getString("spawnLocation");
+                String locationString = rs.getString("location");
+                Location spawnLocation = getLocation(spawnLocationString);
+                Location location = getLocation(locationString);
+                return new Island(
+                        spawnLocation, location, owner,
+                        playersDAO.getMembers(owner),
+                        minionsDAO.selectMinionsByOwner(owner.getUniqueId())
+                );
+            }
         }catch (SQLException e){
             e.printStackTrace();
         }
         return null;
     }
 
+    public void updateIsland(Island island) {
+        String sql = "UPDATE ISLAND SET spawnLocation = ?, location = ? WHERE owner = ?";
+        try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, setLocation(island.getSpawnLocation()));
+            stm.setString(2, setLocation(island.getLocation()));
+            stm.setString(3, island.getOwner().getName());
+            stm.executeUpdate();
+
+            playersDAO.updateMembers(island.getOwner(), island.getMembers());
+            minionsDAO.updateMinions(island.getMinions());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Location getLocation(String location){
         if(location == null){
@@ -79,10 +104,10 @@ public class IslandDAO extends MySQLContainer {
     }
 
     public String setLocation(Location location){
-        return  location.getWorld() + "," +
+        return  location.getWorld().getName() + "," +
                 location.getBlockX() + "," +
                 location.getBlockY() + "," +
-                location.getZ();
+                location.getBlockZ();
     }
 
     private Connection getConnection(){

@@ -1,15 +1,12 @@
-package me.zeroseven.island.GUI;
+package me.zeroseven.island.GUI.island;
 
 import me.zeroseven.island.config.MenuConfiguration;
 import me.zeroseven.island.config.other.ConfigLoader;
 import me.zeroseven.island.island.Island;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IslandGUI {

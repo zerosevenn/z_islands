@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import me.zeroseven.island.GUI.MinionGUI;
+import me.zeroseven.island.GUI.minion.MinionGUI;
 import me.zeroseven.island.IslandPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

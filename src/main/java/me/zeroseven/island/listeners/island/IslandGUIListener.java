@@ -1,10 +1,11 @@
-package me.zeroseven.island.listeners;
+package me.zeroseven.island.listeners.island;
 
 
-import me.zeroseven.island.GUI.IslandGUIHolder;
+import me.zeroseven.island.GUI.island.IslandGUIHolder;
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.island.Island;
 import me.zeroseven.island.nms.IslandLoader;
+import me.zeroseven.island.nms.IslandSchematic;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ public class IslandGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
+        Location location = player.getLocation();
 
         if(event.getClickedInventory() == null){
             return;
@@ -32,31 +34,36 @@ public class IslandGUIListener implements Listener {
         if(event.getInventory().getHolder() instanceof IslandGUIHolder){
             event.setCancelled(true);
 
-            if(event.getInventory().getHolder() == null){
+
+        if(event.getInventory().getHolder() == null){
                 return;
             }
-
-
 
             IslandGUIHolder islandGUIHolder = (IslandGUIHolder) event.getClickedInventory().getHolder();
 
-            Island island = islandGUIHolder.getIsland();
-            Location islandLocation = island.getLocation();
-
-            if(island.getLocation() == null){
-                System.out.println("island is null");
+            if(islandGUIHolder.getIsland() == null){
                 return;
             }
 
-            switch (event.getRawSlot()){
-                case 14 -> islandLoader.loadSchematic("desertisland.schem", islandLocation.getWorld(), islandLocation, player);
-                case 12 -> islandLoader.loadSchematic("netherisland.schem", islandLocation.getWorld(), islandLocation, player);
-                case 11 -> islandLoader.loadSchematic("medievalisland.schem", islandLocation.getWorld(), islandLocation, player);
-                case 15 -> islandLoader.loadSchematic("jungleisland.schem", islandLocation.getWorld(), islandLocation, player);
+            Island island = islandGUIHolder.getIsland();
+
+            if(island.getLocation() == null){
+                return;
             }
 
-            System.out.println("island teleporting");
-            player.teleport(island.getSpawnLocation());
+            Location islandLocation = island.getLocation().add(0, -47, 0);
+
+
+            switch (event.getRawSlot()){
+                case 14 -> new IslandSchematic("desertisland.schem", islandLocation, player).paste();
+                case 12 -> new IslandSchematic("netherisland.schem",  islandLocation.add(90, 68, 6), player).pasteAndRotate(180);
+                case 11 -> new IslandSchematic("medievalisland.schem", islandLocation, player);
+                case 15 -> new IslandSchematic("jungleisland.schem",   islandLocation, player);
+            }
+
+
+
+
 
         }
     }
