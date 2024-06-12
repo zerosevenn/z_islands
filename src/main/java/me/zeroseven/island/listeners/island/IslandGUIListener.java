@@ -4,7 +4,6 @@ package me.zeroseven.island.listeners.island;
 import me.zeroseven.island.GUI.island.IslandGUIHolder;
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.island.Island;
-import me.zeroseven.island.nms.IslandLoader;
 import me.zeroseven.island.nms.IslandSchematic;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,11 +14,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public class IslandGUIListener implements Listener {
 
     IslandPlugin plugin;
-    IslandLoader islandLoader;
 
     public IslandGUIListener(IslandPlugin plugin) {
         this.plugin = plugin;
-        this.islandLoader = new IslandLoader(plugin);
     }
 
     @EventHandler
@@ -51,7 +48,7 @@ public class IslandGUIListener implements Listener {
                 return;
             }
 
-            Location islandLocation = island.getLocation().add(0, -47, 0);
+            Location islandLocation = island.getLocation().clone().add(0, 0, 0);
 
 
             switch (event.getRawSlot()){

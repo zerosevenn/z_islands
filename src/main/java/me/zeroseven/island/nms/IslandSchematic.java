@@ -12,10 +12,13 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import me.zeroseven.island.IslandPlugin;
+import me.zeroseven.island.buffer.IslandBuffer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,10 +31,11 @@ public class IslandSchematic {
     private Location location;
     private Player player;
 
+    private IslandBuffer islandBuffer = IslandPlugin.getIslandBuffer();
     public IslandSchematic(String schematicFileName, Location location, Player player) {
         this.plugin = (IslandPlugin) Bukkit.getPluginManager().getPlugin("zIsland");
         this.schematicFileName = schematicFileName;
-        this.location = location;
+        this.location = location.clone();
         this.player = player;
     }
 
@@ -66,6 +70,7 @@ public class IslandSchematic {
                     BlockVector3 relativePosition = blockVector3.subtract(origin).add(pastePosition);
                     Location blockLocation = new Location(location.getWorld(), relativePosition.getX(), relativePosition.getY(), relativePosition.getZ());
                     sendBlockChange(player, blockLocation, material);
+                    islandBuffer.getVisibleBlocks(player).put(blockLocation, new ItemStack(material));
                 }
             });
         } catch (IOException e) {
@@ -100,6 +105,7 @@ public class IslandSchematic {
                     BlockVector3 relativePosition = blockVector3.subtract(origin).add(pastePosition);
                     Location blockLocation = new Location(location.getWorld(), relativePosition.getX(), relativePosition.getY(), relativePosition.getZ());
                     sendBlockChange(player, blockLocation, material);
+                    islandBuffer.getVisibleBlocks(player).put(blockLocation, new ItemStack(material));
                 }
             });
         } catch (IOException e) {

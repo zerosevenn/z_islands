@@ -79,6 +79,9 @@ public class MinionsDAO extends MySQLContainer {
     }
 
     public void updateMinions(List<Minion> minions) {
+        if(minions == null){
+            return;
+        }
         String sql = "UPDATE Minion SET type = ?, location_x = ?, location_y = ?, location_z = ?, world_name = ?, level = ?, experience = ?, drops = ? WHERE id = ?";
         try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             for (Minion minion : minions) {

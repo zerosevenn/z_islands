@@ -2,6 +2,7 @@ package me.zeroseven.island.database;
 
 import me.zeroseven.island.database.operator.MySQLContainer;
 import me.zeroseven.island.island.Island;
+import me.zeroseven.island.island.IslandType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,7 +26,7 @@ public class IslandDAO extends MySQLContainer {
     }
 
     public void createTable(){
-        String sql = "CREATE TABLE IF NOT EXISTS ISLAND(owner VARCHAR(36) PRIMARY KEY, spawnLocation STRING, location STRING)";
+        String sql = "CREATE TABLE IF NOT EXISTS ISLAND(owner VARCHAR(36) PRIMARY KEY, spawnLocation STRING, location STRING, islandType VARCHAR(16))";
         try(Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)){
             preparedStatement.execute();
         }catch (SQLException e){
@@ -40,12 +41,13 @@ public class IslandDAO extends MySQLContainer {
             return;
         }
 
-        String sql = "INSERT INTO ISLAND(owner, spawnLocation, location) VALUES (?,?,?)";
+        String sql = "INSERT INTO ISLAND(owner, spawnLocation, location, islandType) VALUES (?,?,?,?)";
 
         try(Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)){
             stm.setString(1, island.getOwner().getName());
             stm.setString(2, setLocation(island.getSpawnLocation()));
             stm.setString(3, setLocation(island.getLocation()));
+            stm.setString(4, island.getIslandType().toString());
             playersDAO.insertMembers(island.getOwner(), island.getMembers());
             minionsDAO.insertMinions(island.getMinions());
             stm.execute();
@@ -62,12 +64,13 @@ public class IslandDAO extends MySQLContainer {
             if (rs.next()) {
                 String spawnLocationString = rs.getString("spawnLocation");
                 String locationString = rs.getString("location");
+                String islandType = rs.getString("islandType");
                 Location spawnLocation = getLocation(spawnLocationString);
                 Location location = getLocation(locationString);
                 return new Island(
                         spawnLocation, location, owner,
                         playersDAO.getMembers(owner),
-                        minionsDAO.selectMinionsByOwner(owner.getUniqueId())
+                        minionsDAO.selectMinionsByOwner(owner.getUniqueId()), IslandType.valueOf(islandType)
                 );
             }
         }catch (SQLException e){
@@ -77,11 +80,12 @@ public class IslandDAO extends MySQLContainer {
     }
 
     public void updateIsland(Island island) {
-        String sql = "UPDATE ISLAND SET spawnLocation = ?, location = ? WHERE owner = ?";
+        String sql = "UPDATE ISLAND SET spawnLocation = ?, location = ?, islandType = ? WHERE owner = ?";
         try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setString(1, setLocation(island.getSpawnLocation()));
             stm.setString(2, setLocation(island.getLocation()));
-            stm.setString(3, island.getOwner().getName());
+            stm.setString(3, island.getIslandType().toString());
+            stm.setString(4, island.getOwner().getName());
             stm.executeUpdate();
 
             playersDAO.updateMembers(island.getOwner(), island.getMembers());
@@ -90,6 +94,7 @@ public class IslandDAO extends MySQLContainer {
             e.printStackTrace();
         }
     }
+
 
     public Location getLocation(String location){
         if(location == null){

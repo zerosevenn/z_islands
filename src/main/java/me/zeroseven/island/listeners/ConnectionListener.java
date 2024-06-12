@@ -29,6 +29,8 @@ public class ConnectionListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
         islandBuffer.savePlayerIsland(player);
+        islandBuffer.setIslandLoaded(player, false);
+        islandBuffer.getVisibleBlocks(player).clear();
     }
 
 

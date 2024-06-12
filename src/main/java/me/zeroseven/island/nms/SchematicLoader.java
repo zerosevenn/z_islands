@@ -4,44 +4,30 @@ package me.zeroseven.island.nms;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.transform.AffineTransform;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import me.zeroseven.island.IslandPlugin;
-import org.bukkit.Bukkit;
+import me.zeroseven.island.island.IslandType;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class IslandLoader {
+public class SchematicLoader {
 
-    private IslandPlugin plugin;
-    private PacketBlockManager packetBlockManager;
-    private final Set<BlockPosition> visibleBlocks = new HashSet<>();
+    private static IslandPlugin plugin;
 
 
-    public IslandLoader(IslandPlugin instance) {
-        this.plugin = instance;
-        packetBlockManager = IslandPlugin.getBlockManager();
+    public SchematicLoader(IslandPlugin instance) {
+        plugin = instance;
     }
 
 
@@ -80,7 +66,7 @@ public class IslandLoader {
         }
     }
 
-    private void sendBlockChange(Player player, Location location, Material material) {
+    public static void sendBlockChange(Player player, Location location, Material material) {
         PacketContainer packet = plugin.getProtocolManager().createPacket(com.comphenix.protocol.PacketType.Play.Server.BLOCK_CHANGE);
         packet.getBlockPositionModifier().write(0, new com.comphenix.protocol.wrappers.BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         packet.getBlockData().write(0, WrappedBlockData.createData(material));
@@ -106,8 +92,14 @@ public class IslandLoader {
         return null;
     }
 
-    public Set<BlockPosition> getVisibleBlocks() {
-        return visibleBlocks;
+    public static void loadIslandByType(Player player, Location islandLocation, IslandType type){
+        switch (type){
+            case DESERT -> new IslandSchematic("desertisland.schem", islandLocation.clone(), player).paste();
+            case NETHER -> new IslandSchematic("netherisland.schem",  islandLocation.clone().add(+25, -47, -33), player).pasteAndRotate(180);
+            case MEDIEVAL -> new IslandSchematic("medievalisland.schem", islandLocation.clone(), player);
+            case JUNGLE -> new IslandSchematic("jungleisland.schem",   islandLocation.clone(), player);
+        }
     }
+
 }
 

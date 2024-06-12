@@ -24,7 +24,6 @@ import me.zeroseven.island.minions.MinionType;
 import me.zeroseven.island.minions.types.BlockMinion;
 import me.zeroseven.island.minions.types.CropMinion;
 import me.zeroseven.island.minions.types.MobMinion;
-import me.zeroseven.island.nms.PacketBlockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,8 +44,6 @@ public final class IslandPlugin extends JavaPlugin {
     public static final Map<LivingEntity, MobMinion> antiDropMinion = new HashMap<>();
     private static IslandBuffer islandBuffer;
 
-    private static PacketBlockManager blockManager;
-
     private ProtocolManager protocolManager;
     public static int TOTAL;
 
@@ -54,7 +51,6 @@ public final class IslandPlugin extends JavaPlugin {
     public void onEnable() {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         islandBuffer = new IslandBuffer(this);
-        blockManager = new PacketBlockManager(this);
 
         setupDAO();
         registerEvents();
@@ -219,10 +215,6 @@ public final class IslandPlugin extends JavaPlugin {
 
     public static IslandBuffer getIslandBuffer() {
         return islandBuffer;
-    }
-
-    public static PacketBlockManager getBlockManager() {
-        return blockManager;
     }
 
     public ProtocolManager getProtocolManager() {

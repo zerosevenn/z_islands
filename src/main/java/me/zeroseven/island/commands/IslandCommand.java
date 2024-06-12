@@ -6,8 +6,8 @@ import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.config.IslandConfiguration;
 import me.zeroseven.island.island.Island;
-import me.zeroseven.island.nms.IslandLoader;
-import me.zeroseven.island.nms.PacketBlockManager;
+import me.zeroseven.island.island.IslandType;
+import me.zeroseven.island.nms.SchematicLoader;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,15 +21,13 @@ public class IslandCommand implements CommandExecutor {
 
 
 
-    private IslandLoader islandLoader;
+    private SchematicLoader islandLoader;
     private IslandBuffer islandBuffer;
-    private PacketBlockManager packetBlockManager;
     private FileConfiguration islandConfiguration;
 
     public IslandCommand(IslandPlugin instance) {
-        this.islandLoader = new IslandLoader(instance);
+        this.islandLoader = new SchematicLoader(instance);
         this.islandBuffer = IslandPlugin.getIslandBuffer();
-        this.packetBlockManager = IslandPlugin.getBlockManager();
         this.islandConfiguration = new IslandConfiguration(instance).getConfiguration();
     }
 
@@ -61,7 +59,10 @@ public class IslandCommand implements CommandExecutor {
 
             if(args[0].equalsIgnoreCase("buffer")){
                 Island island = islandBuffer.getPlayerIsland(player);
-                Location islandLocation =island.getLocation();
+                if(island.getLocation() == null){
+                    return false;
+                }
+                Location islandLocation =island.getSpawnLocation();
                 player.sendMessage(ChatColor.GREEN + "Loading buffer informations: "
                         , "Location: x-" + (int) islandLocation.getX() + ", y-" + (int) islandLocation.getY() + ", z-" + (int) islandLocation.getZ()
                         , "Owner: " + island.getOwner().getName());
@@ -103,21 +104,6 @@ public class IslandCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.GREEN + "Chunks visíveis recarregados.");
             }
 
-            if(args[0].equalsIgnoreCase("load")){
-                Location loc = player.getLocation().subtract(58, 70, 28);
-
-
-                Island island = new Island(loc, loc, player, new ArrayList<>(), new ArrayList<>());
-                islandBuffer.updatePlayerIsland(player, island);
-
-                islandLoader.loadSchematic("positionisland.schem", loc, player);
-
-                packetBlockManager.getBlockSet().put(player.getUniqueId(), islandLoader.getVisibleBlocks());
-
-                player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
-
-            }
-
             if (args[0].equalsIgnoreCase("theme")) {
                 Island island = islandBuffer.getPlayerIsland(player);
 
@@ -127,6 +113,24 @@ public class IslandCommand implements CommandExecutor {
                 }
                 player.openInventory(IslandThemeGUI.createInventory(player, island));
             }
+        }
+        if(args.length == 2){
+            if(args[0].equalsIgnoreCase("load")){
+                IslandType type = IslandType.valueOf(args[1].toUpperCase());
+                Location islandLocation = player.getLocation();
+                System.out.println("x: " + islandLocation.getX() + " y: " + islandLocation.getY() + "z: " + islandLocation.getZ());
+                Island island = new Island(islandLocation.clone(), islandLocation.clone(), player, new ArrayList<>(), new ArrayList<>(),type);
+                islandBuffer.updatePlayerIsland(player, island);
+
+
+                SchematicLoader.loadIslandByType(player, islandLocation, type);
+
+
+
+                player.sendMessage(ChatColor.YELLOW + "Island placed sucessfully!");
+
+            }
+
         }
         return false;
     }

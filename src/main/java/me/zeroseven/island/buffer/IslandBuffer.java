@@ -1,16 +1,23 @@
 package me.zeroseven.island.buffer;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
 import me.zeroseven.island.database.IslandDAO;
 import me.zeroseven.island.island.Island;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class IslandBuffer {
 
     private JavaPlugin instance;
     private HashMap<Player, Island> islandHashMap;
+    private HashMap<Player, HashMap<Location, ItemStack>> visibleBlocksMap;
     private HashMap<Player, Boolean> isLoadedMap;
     private HashMap<Player, Player> friendIslandMap;
     private IslandDAO islandDAO;
@@ -21,6 +28,7 @@ public class IslandBuffer {
         this.isLoadedMap = new HashMap<>();
         this.friendIslandMap = new HashMap<>();
         this.islandDAO = new IslandDAO(instance);
+        this.visibleBlocksMap = new HashMap<>();
     }
 
     public Island getPlayerIsland(Player player){
@@ -36,6 +44,7 @@ public class IslandBuffer {
     }
 
     public void updatePlayerIsland(Player player, Island island){
+        System.out.println(island.getLocation());
         islandHashMap.put(player, island);
     }
 
@@ -45,6 +54,14 @@ public class IslandBuffer {
         }
         System.out.println("Trying save player");
         islandDAO.insertIsland(getPlayerIsland(player));
+    }
+
+    public HashMap<Location, ItemStack> getVisibleBlocks(Player player){
+        return visibleBlocksMap.getOrDefault(player, new HashMap<>());
+    }
+
+    public void setVisibleBlocks(Player player, HashMap<Location, ItemStack> visibleBlocks){
+        visibleBlocksMap.put(player, visibleBlocks);
     }
 
     public boolean isIslandLoaded(Player player) {

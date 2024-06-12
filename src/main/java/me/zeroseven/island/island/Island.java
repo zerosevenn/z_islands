@@ -16,12 +16,23 @@ public class Island {
     private List<Player> members;
     private List<Minion> minions;
 
-    public Island(Location spawnLocation, Location location, Player owner, List<Player> members, List<Minion> minions) {
+    private IslandType islandType;
+
+    public Island(Location spawnLocation, Location location, Player owner, List<Player> members, List<Minion> minions, IslandType islandType) {
         this.spawnLocation = spawnLocation;
         this.location = location;
         this.owner = owner;
         this.members = members;
         this.minions = minions;
+        this.islandType = islandType;
+    }
+
+    public IslandType getIslandType() {
+        return islandType;
+    }
+
+    public void setIslandType(IslandType islandType) {
+        this.islandType = islandType;
     }
 
     public Location getSpawnLocation() {
@@ -66,3 +77,4 @@ public class Island {
 
 
 }
+
