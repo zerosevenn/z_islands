@@ -23,6 +23,8 @@ public class MinionSpawner {
 	MinionType type;
 	ItemStack item;
 
+	Minion minion;
+
 	public MinionSpawner(int id, MinionType type, ItemStack item) {
 		this.id = id;
 		this.type = type;
@@ -91,9 +93,13 @@ public class MinionSpawner {
 		} else {
 			m = new MobMinion(id, loc, owner.getUniqueId(), 0);
 		}
-		
+		this.minion = m;
 		m.spawn();
 		IslandPlugin.MINIONS.add(m);
+	}
+
+	public Minion getMinion() {
+		return minion;
 	}
 
 	public int getID() {

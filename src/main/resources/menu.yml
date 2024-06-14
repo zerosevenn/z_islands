@@ -2,15 +2,23 @@ Minion:
   Tapper:
     displayName: '&0'
     material: YELLOW_STAINED_GLASS_PANE
+    lore:
+      - '&7Click to select'
   Background:
     displayName: '&0'
     material: WHITE_STAINED_GLASS_PANE
+    lore:
+      - '&7Click to select'
   GetItems:
     displayName: '&aGet Items'
     material: ENDER_CHEST
-  Bedrock:
-    displayName: '&cRemove Minion'
-    material: BEDROCK
+    lore:
+      - '&7Click to select'
+  Start:
+    displayName: '&cStart Working'
+    material: NETHER_STAR
+    lore:
+      - '&7Click to start'
 Island:
   Background:
     displayName: '&0'

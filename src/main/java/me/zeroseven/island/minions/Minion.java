@@ -26,6 +26,7 @@ public abstract class Minion {
 	int level;
 	double experience;
 	ItemStack[] drops;
+	ArmorStand armorStand;
 
 	public Minion(int id, MinionType type, Location loc, UUID owner, double experience) {
 		this.id = id;
@@ -53,7 +54,17 @@ public abstract class Minion {
 		
 		inv.setItem(11, blockType);
 	}
-	
+
+	public static ArmorStand getArmorStand(Location location) {
+		for (Entity en : location.getWorld().getNearbyEntities(location, 1, 1, 1)) {
+			if (en instanceof ArmorStand) {
+				ArmorStand stand = (ArmorStand) en;
+				return stand;
+			}
+		}
+		return null;
+	}
+
 	public void upgrade() {
 		if (canLevelUp()) {
 			level++;

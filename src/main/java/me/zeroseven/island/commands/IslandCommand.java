@@ -7,6 +7,7 @@ import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.config.IslandConfiguration;
 import me.zeroseven.island.island.Island;
 import me.zeroseven.island.island.IslandType;
+import me.zeroseven.island.minions.MinionLoader;
 import me.zeroseven.island.nms.SchematicLoader;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -21,11 +22,13 @@ public class IslandCommand implements CommandExecutor {
 
 
 
+    private IslandPlugin instance;
     private SchematicLoader islandLoader;
     private IslandBuffer islandBuffer;
     private FileConfiguration islandConfiguration;
 
     public IslandCommand(IslandPlugin instance) {
+        this.instance = instance;
         this.islandLoader = new SchematicLoader(instance);
         this.islandBuffer = IslandPlugin.getIslandBuffer();
         this.islandConfiguration = new IslandConfiguration(instance).getConfiguration();
@@ -124,6 +127,7 @@ public class IslandCommand implements CommandExecutor {
 
 
                 SchematicLoader.loadIslandByType(player, islandLocation, type);
+                new MinionLoader(island).load();
 
 
 

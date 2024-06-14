@@ -22,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.swing.plaf.PanelUI;
+import java.util.HashSet;
+import java.util.Set;
 
 public class IslandListeners implements Listener {
 
@@ -49,22 +51,31 @@ public class IslandListeners implements Listener {
             return;
         }
 
-        Location islandLocation = island.getSpawnLocation();
-        IslandType type = island.getIslandType();
-        Chunk centralChunk = event.getChunk();
+        Location islandLocation = island.getLocation();
+        IslandType type =  island.getIslandType();
 
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                Chunk chunk = centralChunk.getWorld().getChunkAt(centralChunk.getX() + x, centralChunk.getZ() + z);
-                if (chunk.equals(islandLocation.getChunk())) {
-                    chunk.load();
-                    SchematicLoader.loadIslandByType(player, islandLocation, type);
-                    islandBuffer.setIslandLoaded(player, true);
+        Chunk chunk = event.getChunk();
+
+
+        if (chunk.equals(islandLocation.getChunk())) {
+            for(Chunk chunks : getChunksWithinRenderDistance(player)) {
+                chunks.setForceLoaded(true);
+                chunks.load();
+                try {
+                    wait(5);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
-        }
+
+
+                SchematicLoader.loadIslandByType(player, islandLocation, type);
+                islandBuffer.setIslandLoaded(player, true);
+            }
 
     }
+
 
 
     public void onClientInteract() {
@@ -95,6 +106,27 @@ public class IslandListeners implements Listener {
 
         protocolManager.addPacketListener(packetListener);
     }
+    public static Set<Chunk> getChunksWithinRenderDistance(Player player) {
+        Set<Chunk> chunks = new HashSet<>();
+        Location location = player.getLocation();
+        int renderDistance = 5;
+
+        int playerChunkX = location.getChunk().getX();
+        int playerChunkZ = location.getChunk().getZ();
+
+        int minChunkX = playerChunkX - renderDistance;
+        int maxChunkX = playerChunkX + renderDistance;
+        int minChunkZ = playerChunkZ - renderDistance;
+        int maxChunkZ = playerChunkZ + renderDistance;
+
+        for (int x = minChunkX; x <= maxChunkX; x++) {
+            for (int z = minChunkZ; z <= maxChunkZ; z++) {
+                chunks.add(location.getWorld().getChunkAt(x, z));
+            }
+        }
+        return chunks;
+    }
+
 
 
 

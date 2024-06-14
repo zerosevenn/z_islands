@@ -135,7 +135,7 @@ public class MobMinion extends Minion implements ConfigurationSerializable {
 		stand.setArms(true);
 		stand.setHelmet(skull);
 		stand.setChestplate(new ItemStack(Material.LEATHER_CHESTPLATE));
-		stand.setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
+		stand.setItemInHand(new ItemStack(Material.DIAMOND_HOE));
 		stand.setLeggings(new ItemStack(Material.LEATHER_LEGGINGS));
 		stand.setBoots(new ItemStack(Material.LEATHER_BOOTS));
 		stand.setGravity(false);

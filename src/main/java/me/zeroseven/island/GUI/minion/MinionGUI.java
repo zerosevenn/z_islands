@@ -26,7 +26,7 @@ public class MinionGUI {
 		ItemStack yellow = configLoader.getItemStack("Minion.Tapper");
 		ItemStack pane = configLoader.getItemStack("Minion.Background");
 		ItemStack chest = configLoader.getItemStack("Minion.GetItems");
-		ItemStack bedrock = configLoader.getItemStack("Minion.Bedrock");
+		ItemStack bedrock = configLoader.getItemStack("Minion.Start");
 
 		for(int i = 0; i < inv.getSize(); i++){
 			inv.setItem(i, pane);
