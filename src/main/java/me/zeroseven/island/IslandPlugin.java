@@ -6,6 +6,7 @@ import me.zeroseven.island.buffer.IslandBuffer;
 import me.zeroseven.island.commands.IslandCommand;
 import me.zeroseven.island.commands.MinionCommand;
 import me.zeroseven.island.commands.SellCommand;
+import me.zeroseven.island.commands.ShopCommand;
 import me.zeroseven.island.config.IslandConfiguration;
 import me.zeroseven.island.config.MenuConfiguration;
 import me.zeroseven.island.config.other.FileManager;
@@ -19,11 +20,13 @@ import me.zeroseven.island.listeners.minion.MinionGUIListener;
 import me.zeroseven.island.listeners.minion.MinionListeners;
 import me.zeroseven.island.listeners.minion.MinionSpawnerListener;
 import me.zeroseven.island.listeners.minion.UpgradeGUIListener;
+import me.zeroseven.island.listeners.shop.MailGUIListener;
 import me.zeroseven.island.minions.Minion;
 import me.zeroseven.island.minions.MinionType;
 import me.zeroseven.island.minions.types.BlockMinion;
 import me.zeroseven.island.minions.types.CropMinion;
 import me.zeroseven.island.minions.types.MobMinion;
+import me.zeroseven.island.shop.Market;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,6 +46,7 @@ public final class IslandPlugin extends JavaPlugin {
     public static final List<LivingEntity> antiDrop = new ArrayList<>();
     public static final Map<LivingEntity, MobMinion> antiDropMinion = new HashMap<>();
     private static IslandBuffer islandBuffer;
+    private static Market market;
 
     private ProtocolManager protocolManager;
     public static int TOTAL;
@@ -51,12 +55,14 @@ public final class IslandPlugin extends JavaPlugin {
     public void onEnable() {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         islandBuffer = new IslandBuffer(this);
+        market = new Market(this);
 
         setupDAO();
         registerEvents();
         registerCommands();
         registerSerializations();
         saveConfigs();
+        market.load();
 
 
         TOTAL = getConfig().getInt("total");
@@ -69,6 +75,7 @@ public final class IslandPlugin extends JavaPlugin {
         saveMinions();
         saveConfig();
         savePlayers();
+        market.save();
     }
 
     private void saveConfigs(){
@@ -86,12 +93,14 @@ public final class IslandPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new IslandListeners(this), this);
         getServer().getPluginManager().registerEvents(new IslandGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
+        getServer().getPluginManager().registerEvents(new MailGUIListener(this), this);
     }
 
     private void registerCommands() {
         getCommand("minion").setExecutor(new MinionCommand());
         getCommand("island").setExecutor(new IslandCommand(this));
         getCommand("sell").setExecutor(new SellCommand());
+        getCommand("mail").setExecutor(new ShopCommand(this));
     }
 
     private void registerSerializations() {

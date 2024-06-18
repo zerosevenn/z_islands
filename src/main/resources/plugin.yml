@@ -8,6 +8,8 @@ commands:
   minion:
     usage: /minion <player> <type>
     description: Gives the speicified player a Minion spawner.
+  mail:
+    usage: /mail
   sell:
     usage: /sell <value>
     description: use this command to sell items

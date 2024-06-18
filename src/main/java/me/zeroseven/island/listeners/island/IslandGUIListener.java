@@ -22,7 +22,6 @@ public class IslandGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         Player player = (Player) event.getWhoClicked();
-        Location location = player.getLocation();
 
         if(event.getClickedInventory() == null){
             return;

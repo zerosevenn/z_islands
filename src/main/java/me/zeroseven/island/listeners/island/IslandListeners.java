@@ -35,9 +35,11 @@ public class IslandListeners implements Listener {
         this.instance = instance;
         this.islandBuffer = IslandPlugin.getIslandBuffer();
         this.protocolManager = instance.getProtocolManager();
-        onClientInteract();
+        //onClientInteract();
     }
 
+
+    /**
     @EventHandler
     public void onChunkLoad(PlayerChunkLoadEvent event) {
         Player player = event.getPlayer();
@@ -76,8 +78,6 @@ public class IslandListeners implements Listener {
 
     }
 
-
-
     public void onClientInteract() {
         PacketListener packetListener =  new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ITEM, PacketType.Play.Client.BLOCK_DIG, PacketType.Play.Client.BLOCK_PLACE) {
             @Override
@@ -106,6 +106,8 @@ public class IslandListeners implements Listener {
 
         protocolManager.addPacketListener(packetListener);
     }
+     **/
+
     public static Set<Chunk> getChunksWithinRenderDistance(Player player) {
         Set<Chunk> chunks = new HashSet<>();
         Location location = player.getLocation();

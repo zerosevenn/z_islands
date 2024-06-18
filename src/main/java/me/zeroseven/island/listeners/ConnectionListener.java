@@ -2,6 +2,8 @@ package me.zeroseven.island.listeners;
 
 import me.zeroseven.island.IslandPlugin;
 import me.zeroseven.island.buffer.IslandBuffer;
+import me.zeroseven.island.island.Island;
+import me.zeroseven.island.nms.SchematicLoader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +25,15 @@ public class ConnectionListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
         islandBuffer.loadPlayerIsland(player);
+
+        if(islandBuffer.getPlayerIsland(player) == null)
+            return;
+
+        Island island = islandBuffer.getPlayerIsland(player);
+        do {
+            SchematicLoader.loadIslandByType(player, island.getLocation(), island.getIslandType());
+            break;
+        } while (island.getLocation().getChunk().isLoaded());
     }
 
     @EventHandler

@@ -58,15 +58,5 @@ public class MinionGUI {
 		return inv;
 		
 	}
-	
-	private static ItemStack icon(Material mat, String displayName) {
-		
-		ItemStack item = new ItemStack(mat);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(displayName);
-		item.setItemMeta(meta);
-		
-		return item;
-	}
 
 }
