@@ -21,6 +21,7 @@ import me.zeroseven.island.listeners.minion.MinionListeners;
 import me.zeroseven.island.listeners.minion.MinionSpawnerListener;
 import me.zeroseven.island.listeners.minion.UpgradeGUIListener;
 import me.zeroseven.island.listeners.shop.MailGUIListener;
+import me.zeroseven.island.listeners.shop.ShopListener;
 import me.zeroseven.island.minions.Minion;
 import me.zeroseven.island.minions.MinionType;
 import me.zeroseven.island.minions.types.BlockMinion;
@@ -94,6 +95,7 @@ public final class IslandPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new IslandGUIListener(this), this);
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
         getServer().getPluginManager().registerEvents(new MailGUIListener(this), this);
+        getServer().getPluginManager().registerEvents(new ShopListener(), this);
     }
 
     private void registerCommands() {
@@ -220,6 +222,10 @@ public final class IslandPlugin extends JavaPlugin {
         } else if (cal.getTimeInMillis() >= mm.getMobKillDate()) {
             mm.killMobs();
         }
+    }
+
+    public static Market getMarket() {
+        return market;
     }
 
     public static IslandBuffer getIslandBuffer() {

@@ -5,15 +5,17 @@ import me.zeroseven.island.database.MarketDAO;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class Market {
-
-
 
     private List<ShopItem> sellingItems;
 
     private List<ShopItem> mailItems;
+
+    private HashMap<Integer, List<ShopItem>> stockmap;
 
     private MarketDAO marketDAO;
 
@@ -52,6 +54,14 @@ public class Market {
         return shopItems;
     }
 
+    public List<ShopItem> getStockItems(int id){
+        return stockmap.getOrDefault(id, new ArrayList<>());
+    }
+
+    public List<ShopItem> getSellingItems(){
+        return marketDAO.getSellingItems();
+    }
+
     public void removeItem(ShopItem shopItem){
         sellingItems.remove(shopItem);
         mailItems.add(shopItem);
@@ -65,6 +75,7 @@ public class Market {
 
     public void sellItem(ShopItem shopItem){
         sellingItems.add(shopItem);
+        System.out.println("Adding to sell: " + shopItem.getOwner());
     }
 
 

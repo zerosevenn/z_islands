@@ -1,9 +1,11 @@
 package me.zeroseven.island.commands;
 
+import me.zeroseven.island.IslandPlugin;
+import me.zeroseven.island.shop.Market;
+import me.zeroseven.island.shop.ShopItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +24,12 @@ import org.bukkit.World;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class SellCommand implements CommandExecutor, Listener {
 
     private final Set<Item> shopItems = new HashSet<>();
+    Market market = IslandPlugin.getMarket();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -35,34 +39,29 @@ public class SellCommand implements CommandExecutor, Listener {
                 try {
                     double price = Double.parseDouble(args[0]);
 
-                    // Obtenha a localização do jogador
-                    Location location = player.getLocation().add(2, 1, 0);
-                    Location blockLocation = location.clone().add(0, -1, 0);
-
-                    // Gera o Bloco de Barril
-                    blockLocation.getBlock().setType(Material.BARREL);
-
-                    // Coloque o bloco de vidro acima do Bloco de Barril
-                    blockLocation.clone().add(0, 1, 0).getBlock().setType(Material.GLASS);
-
-                    // Obtenha o item que o jogador está segurando
                     ItemStack itemInHand = player.getInventory().getItemInMainHand();
+                    ShopItem si = new ShopItem(UUID.randomUUID().toString(), player, player, itemInHand, 0);
+
                     if (itemInHand == null || itemInHand.getType() == Material.AIR) {
-                        player.sendMessage(ChatColor.RED + "Você precisa estar segurando um item para criar uma loja.");
+                        player.sendMessage(ChatColor.RED + "You need to be holding an item to create a shop.");
                         return true;
                     }
 
-                    // Crie um item flutuante acima do bloco de vidro
+                    Location location = new Location(player.getWorld(), (int) player.getLocation().getX(), (int) player.getLocation().getY(), (int) player.getLocation().getZ());
+                    Location blockLocation = location.clone();
+
+                    blockLocation.getBlock().setType(Material.BARREL);
+                    blockLocation.clone().add(0, 1, 0).getBlock().setType(Material.GLASS);
+
                     World world = player.getWorld();
-                    // Definindo a posição central exata do bloco de vidro
-                    Location itemLocation = blockLocation.clone().add(0,1,0);
+                    Location itemLocation = new Location(player.getWorld(), (int) blockLocation.getX() + 0.5, (int) blockLocation.getY() + 1, (int) blockLocation.getZ() + 0.5);
                     Item droppedItem = world.dropItem(itemLocation, itemInHand.clone());
                     droppedItem.setVelocity(new Vector(0, 0, 0));
-                    droppedItem.setPickupDelay(Integer.MAX_VALUE); // Prevenir a coleta do item
+                    droppedItem.setPickupDelay(Integer.MAX_VALUE);
                     droppedItem.setGravity(false);
                     droppedItem.setCanMobPickup(false);
                     droppedItem.setCanPlayerPickup(false);
-                    droppedItem.setCustomNameVisible(false); // Oculta o nome do item
+                    droppedItem.setCustomNameVisible(false);
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -74,26 +73,25 @@ public class SellCommand implements CommandExecutor, Listener {
                         }
                     }.runTaskTimer(JavaPlugin.getProvidingPlugin(getClass()), 1L, 1L);
 
-                    // Remova o item da mão do jogador
                     player.getInventory().setItemInMainHand(null);
 
-                    // Adicione o item à lista de itens da loja
+
+                    System.out.println("Seller: " + si.getOwner());
+
+                    market.sellItem(si);
                     shopItems.add(droppedItem);
 
-                    // Crie hologramas
-                    createHolograms(location.clone().add(0, 0.5, 0), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Item: " + itemInHand.getType().name(), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Price: " + price);
+                    Location clone = itemLocation.clone().add(0, 0.7, 0);
+                    createHolograms(clone.add(0, 0.3, 0), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Item: " + itemInHand.getType().name(), net.md_5.bungee.api.ChatColor.of("#FFD700") + "Price: " + price);
 
-                    player.sendMessage(ChatColor.GREEN + "Você criou uma loja com o preço: " + ChatColor.GOLD + price);
+                    player.sendMessage(ChatColor.GREEN + "You created a shop with the price: " + ChatColor.GOLD + price);
 
                 } catch (NumberFormatException e) {
-                    if(args[0].equalsIgnoreCase("mail")){
-
-                    }
-                    player.sendMessage(ChatColor.RED + "Por favor, insira um valor numérico válido.");
+                    player.sendMessage(ChatColor.RED + "Please enter a valid numeric value.");
                 }
             }
         } else {
-            sender.sendMessage(ChatColor.RED + "Apenas jogadores podem usar este comando.");
+            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
         }
         return true;
     }
@@ -105,8 +103,8 @@ public class SellCommand implements CommandExecutor, Listener {
             armorStand.setCustomNameVisible(true);
             armorStand.setInvisible(true);
             armorStand.setGravity(false);
-            armorStand.setMarker(true); // Opcional: torna o hitbox muito pequeno e não interativo
-            location.add(0, 0.3, 0); // Ajusta a distância vertical entre os hologramas
+            armorStand.setMarker(true);
+            location.add(0, 0.3, 0);
         }
     }
 
